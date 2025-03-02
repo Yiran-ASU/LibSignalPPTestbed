@@ -1,0 +1,15 @@
+# Parameters for apriltag detector node
+family: "tag36h11"
+#ndetectors: 4
+#nthreads: 4
+ndetectors: 4
+nthreads: 1
+#quad_decimate: 1.0
+quad_decimate: 2.0
+#quad_sigma: 0.0
+quad_sigma: 0.8
+refine_edges: 1
+decode_sharpening: 0.25
+tag_size: 0.065
+detection_freq: -1
+rectify_alpha: 0.5

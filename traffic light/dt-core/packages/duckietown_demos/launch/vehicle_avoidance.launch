@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <arg name="vehicle_avoidance" default="false"/>
+    <arg name="/vehicle_avoidance/detection" default="false" />
+    <arg name="/vehicle_avoidance/filter" default="false" />
+    <arg name="/vehicle_avoidance/control" default="false"/>
+    <!-- Start Vehicle Avoidance -->
+    <group if="$(arg vehicle_avoidance)">
+
+        <!-- Vehicle Avoidance Detection Node -->
+        <remap from="vehicle_detection_node/image" to="camera_node/image/compressed" />
+        <remap from="vehicle_detection_node/detection" to="road_anomaly_watcher/obstacle_exists" />
+        <group if="$(arg /vehicle_avoidance/detection)">
+            <include file="$(find vehicle_detection)/launch/vehicle_detection_node.launch">
+                <arg name="veh" value="$(arg veh)"/>
+            </include>
+        </group>
+
+        <!-- Vehicle Avoidance Filter Node -->
+        <remap from="vehicle_filter_node/mode" to="fsm_node/mode" />
+        <remap from="vehicle_filter_node/set_pattern" to="led_emitter_node/set_pattern"/>
+        <remap from="vehicle_filter_node/camera_info" to="camera_node/camera_info" />
+        <remap from="vehicle_filter_node/centers" to="vehicle_detection_node/centers" />
+        <!-- Breaking convenction and remapping an output to make the virtual stop line readings look like
+        real stop line readings -->
+        <remap from="vehicle_filter_node/virtual_stop_line" to="road_anomaly_watcher/obstacle_distance"/>
+        <remap from="vehicle_filter_node/stopped" to="road_anomaly_watcher/obstacle_halted_vehicle"/>
+        <group if="$(arg /vehicle_avoidance/filter)">
+            <include file="$(find vehicle_detection)/launch/vehicle_filter_node.launch">
+                <arg name="veh" value="$(arg veh)"/>
+            </include>
+        </group>
+
+        <!-- Vehicle Avoidance Control Node
+        <group if="$(arg /vehicle_avoidance/control)">
+            <remap from="vehicle_avoidance_control_node/detection" to="vehicle_detection_node/detection"/>
+            <remap from="vehicle_avoidance_control_node/vehicle_pose" to="vehicle_filter_node/pose"/>
+            <remap from="vehicle_avoidance_control_node/car_cmd_in" to="lane_controller_node/car_cmd"/>
+            <include file="$(find vehicle_detection)/launch/vehicle_avoidance_control_node.launch">
+                <arg name="veh" value="$(arg veh)"/>
+            </include>
+        </group>-->
+    </group>
+    <!-- End Vehicle Avoidance -->
+</launch>

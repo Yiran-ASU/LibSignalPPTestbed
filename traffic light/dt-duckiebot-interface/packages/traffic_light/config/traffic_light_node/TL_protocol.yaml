@@ -1,0 +1,9 @@
+number_leds: 4
+activation_order: [0, 1, 2, 3]
+green_time: 5
+all_red_time: 4
+frequency: 7.8
+cycle_duration: 2
+mode: "rule_num"
+#intersection: 4
+intersection: 3
